@@ -41,9 +41,13 @@ class Users(Base):
     __tablename__ = 'mg_users'
 
     ### 用户表
+    # 用户id，主键
     user_id = Column('user_id', Integer, primary_key=True, autoincrement=True)
+    # 用户名
     username = Column('username', String(50), unique=True)
+    # 密码
     password = Column('password', String(100))
+    # 昵称
     nickname = Column('nickname', String(100))
     email = Column('email', String(80), unique=True)  ### 邮箱
     tel = Column('tel', String(11))  ### 手机号
@@ -54,6 +58,7 @@ class Users(Base):
     superuser = Column('superuser', String(5), default='10')  ### 超级用户  0代表超级用户
     status = Column('status', String(5), default='0')
     last_ip = Column('last_ip', String(20), default='')
+    # 最后登录时间
     last_login = Column('last_login', DateTime(), default=datetime.now, onupdate=datetime.now)
     ctime = Column('ctime', DateTime(), default=datetime.now)
 
@@ -85,7 +90,7 @@ class Components(Base):
 
     ### 组件表
     comp_id = Column('comp_id', Integer, primary_key=True, autoincrement=True)
-    component_name = Column('component_name', String(60))
+    component_name = Column('component_name', String(60))  # 组件名称
     status = Column('status', String(5), default='0')
 
 

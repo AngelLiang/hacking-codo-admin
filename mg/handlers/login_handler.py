@@ -38,6 +38,7 @@ class LoginHandler(RequestHandler):
             return self.write(dict(code=-1, msg='账号密码不能为空'))
 
         if is_mail(username):
+            # 用户名是邮箱
             redis_conn = cache_conn()
             configs_init('all')
             login_mail = redis_conn.hget(const.APP_SETTINGS, const.EMAILLOGIN_DOMAIN)
@@ -151,6 +152,8 @@ class LoginHandler(RequestHandler):
 
 
 class LogoutHandler(BaseHandler):
+    """登出处理器"""
+
     def get(self):
         self.clear_all_cookies()
         raise HTTPError(401, 'logout')
@@ -161,6 +164,7 @@ class LogoutHandler(BaseHandler):
 
 
 class AuthorizationHandler(BaseHandler):
+    """认证处理器"""
     def get(self, *args, **kwargs):
         user_id = self.get_current_id()
 
@@ -179,6 +183,7 @@ def get_user_rules(user_id, is_superuser=False):
     with DBContext('r') as session:
 
         if is_superuser:
+            # 超级用户
             components_info = session.query(Components.component_name).filter(Components.status == '0').all()
             page_data['all'] = True
             component_data['all'] = True
@@ -186,11 +191,13 @@ def get_user_rules(user_id, is_superuser=False):
                 component_data[msg[0]] = True
 
         else:
+            # 查询菜单
+            # Menus RoleMenus UserRoles 三表连接查询
             this_menus = session.query(Menus.menu_name).outerjoin(RoleMenus, Menus.menu_id == RoleMenus.menu_id).outerjoin(
                 UserRoles, RoleMenus.role_id == UserRoles.role_id).filter(UserRoles.user_id == user_id,
                                                                           UserRoles.status == '0',
                                                                           Menus.status == '0').all()
-
+            # 查询组件
             this_components = session.query(Components.component_name).outerjoin(RolesComponents,
                                                                                  Components.comp_id == RolesComponents.comp_id
                                                                                  ).outerjoin(

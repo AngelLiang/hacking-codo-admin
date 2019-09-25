@@ -7,6 +7,16 @@ Date    : 2018/10/29
 Desc    : 应用相关逻辑
 """
 
+"""
+    :class:`LogHandler`:
+    :class:`UserRegisterHandler`:
+    :class:`PasswordHandler`:
+    :class:`ResetMFAHandler`:
+    :class:`ResetPasswordHandler`:
+    :class:`TokenHandler`:
+"""
+
+
 import json
 import shortuuid
 import base64
