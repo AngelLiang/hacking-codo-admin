@@ -40,7 +40,7 @@ class UserHandler(BaseHandler):
                 user_info = session.query(Users).filter(Users.status != '10').order_by(Users.user_id).offset(
                     limit_start).limit(int(limit))
 
-            all_user = session.query(Users).filter(Users.status != '10').all()
+            all_user = session.query(Users).filter(Users.status != '10').all()  # 所有用户
             if int(limit) > 200:
                 user_info = all_user
 
@@ -80,6 +80,7 @@ class UserHandler(BaseHandler):
         if not username or not nickname or not department or not tel or not wechat or not no or not email:
             return self.write(dict(code=-1, msg='参数不能为空'))
 
+        # 检查重复的字段
         with DBContext('r') as session:
             user_info1 = session.query(Users).filter(Users.username == username).first()
             user_info2 = session.query(Users).filter(Users.tel == tel).first()
@@ -119,16 +120,19 @@ class UserHandler(BaseHandler):
             return self.write(dict(code=-1, msg='不能为空'))
 
         with DBContext('w', None, True) as session:
+            # 查询用户
             user_info = session.query(Users.username).filter(Users.user_id == user_id).first()
             if user_info[0] == 'admin':
                 return self.write(dict(code=-2, msg='系统管理员用户无法删除'))
-
+            # 删除用户
             session.query(Users).filter(Users.user_id == user_id).delete(synchronize_session=False)
+            # 删除该用户的角色关联表
             session.query(UserRoles).filter(UserRoles.user_id == user_id).delete(synchronize_session=False)
 
         self.write(dict(code=0, msg='删除成功'))
 
     def put(self, *args, **kwargs):
+        """更新用户"""
         data = json.loads(self.request.body.decode("utf-8"))
         key = data.get('key', None)
         value = data.get('value', None)
