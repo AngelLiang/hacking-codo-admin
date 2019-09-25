@@ -139,6 +139,7 @@ class UserHandler(BaseHandler):
 
         try:
             with DBContext('w', None, True) as session:
+                # https://docs.sqlalchemy.org/en/13/orm/query.html#sqlalchemy.orm.query.Query.update
                 session.query(Users).filter(Users.user_id == user_id).update({key: value})
         except Exception as e:
             return self.write(dict(code=-2, msg='修改失败，请检查数据是否合法或者重复'))
